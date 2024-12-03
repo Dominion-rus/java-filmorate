@@ -5,19 +5,20 @@ import lombok.*;
 import java.time.LocalDate;
 
 /**
- * Film.
+ * User.
  */
+
 
 @Data
 @Builder
 @AllArgsConstructor
-public class Film {
+@NoArgsConstructor
+public class User {
     private Long id;
     private String name;
-    private String description;
-    private LocalDate releaseDate;
-    private int duration;
-
+    private String email;
+    private String login;
+    private LocalDate birthday;
 }
 
 
