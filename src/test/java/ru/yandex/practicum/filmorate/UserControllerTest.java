@@ -26,7 +26,7 @@ public class UserControllerTest {
                                  "        \"birthday\": \"1992-10-13\"\n" +
                                  "    }\n";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -41,7 +41,7 @@ public class UserControllerTest {
                                  "        \"birthday\": \"1992-10-13\"\n" +
                                  "    }\n";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidUserJson))
                 .andExpect(status().isBadRequest());
@@ -56,7 +56,7 @@ public class UserControllerTest {
                                "               \"birthday\": \"1946-08-20\"\n" +
                                "             }\n";
 
-        mockMvc.perform(post("/api/v1/users")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validUserJson))
                 .andExpect(status().isCreated());

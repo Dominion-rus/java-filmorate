@@ -28,7 +28,7 @@ public class FilmControllerTest {
                                "      \"duration\": 148\n" +
                                "    }\n";
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validFilmJson))
                 .andExpect(status().isCreated());
@@ -42,7 +42,7 @@ public class FilmControllerTest {
                                  "  \"duration\": 148\n" +
                                  "}";
 
-        mockMvc.perform(post("/api/v1/films")
+        mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidFilmJson))
                 .andExpect(status().isBadRequest());
@@ -50,7 +50,7 @@ public class FilmControllerTest {
 
     @Test
     void shouldReturn200AndListOfFilms() throws Exception {
-        mockMvc.perform(get("/api/v1/films")
+        mockMvc.perform(get("/films")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
