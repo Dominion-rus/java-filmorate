@@ -42,20 +42,23 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("/{id}")
-    public User updateUser(@PathVariable long id,
-                           @RequestBody User updatedUser) {
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь с ID " + id + " не найден");
+    @PutMapping
+    public User updateUser(@RequestBody User updatedUser) {
+        if (updatedUser.getId() == null) {
+            throw new ConditionsNotMetException("ID пользователя должен быть указан");
         }
 
-        User existingUser = users.get(id);
+        if (!users.containsKey(updatedUser.getId())) {
+            throw new NotFoundException("Пользователь с ID " + updatedUser.getId() + " не найден");
+        }
+
+        User existingUser = users.get(updatedUser.getId());
         userValidator.validate(updatedUser);
         existingUser.setName(updatedUser.getName());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setLogin(updatedUser.getLogin());
         existingUser.setBirthday(updatedUser.getBirthday());
-        users.put(id, existingUser);
+        users.put(updatedUser.getId(), existingUser);
 
         return existingUser;
     }

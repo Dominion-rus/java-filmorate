@@ -27,18 +27,26 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             errors.put(error.getField(), error.getDefaultMessage());
         });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
     }
 
     // Обработчик NotFoundException
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("success","false");
+        error.put("error", "NotFound error");
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     // Обработчик ConditionsNotMetException
     @ExceptionHandler(ConditionsNotMetException.class)
     public ResponseEntity<String> handleConditionsNotMetException(ConditionsNotMetException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("success","false");
+        error.put("error", "ConditionsNotMet error");
+        error.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
