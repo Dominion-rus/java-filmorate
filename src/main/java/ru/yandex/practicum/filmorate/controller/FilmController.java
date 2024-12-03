@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class FilmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film createFilm(@RequestBody Film film) {
+    public Film createFilm(@Valid  @RequestBody Film film) {
         if (film == null) {
             throw new ConditionsNotMetException("Фильм не может быть null");
         }
@@ -46,7 +47,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film updatedFilm) {
+    public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
         // Проверяем, передан ли ID
         if (updatedFilm.getId() == null) {
             throw new ConditionsNotMetException("ID фильма должен быть указан");

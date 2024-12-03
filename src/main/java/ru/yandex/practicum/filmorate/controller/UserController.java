@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         if (user == null) {
             throw new ConditionsNotMetException("Пользователь не может быть null");
         }
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User updatedUser) {
+    public User updateUser(@Valid @RequestBody User updatedUser) {
         if (updatedUser.getId() == null) {
             throw new ConditionsNotMetException("ID пользователя должен быть указан");
         }

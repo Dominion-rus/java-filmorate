@@ -12,29 +12,47 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ValidateException.class)
-    public ResponseEntity<Map<String, String>> handleValidateException(ValidateException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("success","false");
+    public ResponseEntity<Map<String, Object>> handleValidateException(ValidateException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("success",false);
         error.put("error", "Validation error");
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // Обработчик MethodArgumentNotValidException
+//    // Обработчик MethodArgumentNotValidException
+//    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+//    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+//        Map<String, String> errors = new HashMap<>();
+//        ex.getBindingResult().getFieldErrors().forEach(error -> {
+//            errors.put(error.getField(), error.getDefaultMessage());
+//        });
+//        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+//    }
+
     @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(org.springframework.web.bind.MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
+            org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        StringBuilder messageBuilder = new StringBuilder("Validation failed for fields: ");
         ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
+            messageBuilder.append(error.getField())
+                    .append(" (")
+                    .append(error.getDefaultMessage())
+                    .append("); ");
         });
-        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("error", "Validation error");
+        response.put("message", messageBuilder.toString().trim());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     // Обработчик NotFoundException
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleNotFoundException(NotFoundException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("success","false");
+    public ResponseEntity<Map<String, Object>> handleNotFoundException(NotFoundException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("success",false);
         error.put("error", "NotFound error");
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
@@ -42,18 +60,18 @@ public class GlobalExceptionHandler {
 
     // Обработчик ConditionsNotMetException
     @ExceptionHandler(ConditionsNotMetException.class)
-    public ResponseEntity<String> handleConditionsNotMetException(ConditionsNotMetException ex) {
-        Map<String, String> error = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> handleConditionsNotMetException(ConditionsNotMetException ex) {
+        Map<String, Object> error = new HashMap<>();
         error.put("success","false");
         error.put("error", "ConditionsNotMet error");
         error.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>>  handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("success","false");
+    public ResponseEntity<Map<String, Object>>  handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("success",false);
         error.put("error", "Validation error");
         error.put("message", "Тело запроса не может быть пустым");
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -61,11 +79,11 @@ public class GlobalExceptionHandler {
 
     // Обработчик всех остальных исключений
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("success","false");
+    public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("success", false);
         error.put("error", "Internal server error");
-        error.put("message", ex.getMessage());
+        error.put("message", "Что-то пошло не так. Пожалуйста, попробуйте позже.");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
