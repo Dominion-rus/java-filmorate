@@ -20,15 +20,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-//    // Обработчик MethodArgumentNotValidException
-//    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
-//    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(org.springframework.web.bind.MethodArgumentNotValidException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getFieldErrors().forEach(error -> {
-//            errors.put(error.getField(), error.getDefaultMessage());
-//        });
-//        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
-//    }
 
     @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(
@@ -83,7 +74,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> error = new HashMap<>();
         error.put("success", false);
         error.put("error", "Internal server error");
-        error.put("message", "Что-то пошло не так. Пожалуйста, попробуйте позже.");
+        error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

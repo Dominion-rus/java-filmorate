@@ -14,18 +14,6 @@ public class UserValidationTest {
     private final UserValidator userValidator = new UserValidator();
 
     @Test
-    void shouldThrowExceptionWhenEmailIsEmpty() {
-        User user = User.builder()
-                .name("Vladimir")
-                .email("")
-                .login("testLogin")
-                .birthday(LocalDate.of(1992, 10, 13))
-                .build();
-
-        assertThrows(ValidateException.class, () -> userValidator.validate(user));
-    }
-
-    @Test
     void shouldThrowExceptionWhenLoginContainsSpaces() {
         User user = User.builder()
                 .name("Vladimir")

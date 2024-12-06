@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -20,7 +23,7 @@ public class User {
     private Long id;
     private String name;
     @Email(message = "Некорректный формат электронной почты")
-    @NotBlank(message = "Логин не может быть пустым")
+    @NotBlank(message = "email не может быть пустым")
     private String email;
     @NotBlank(message = "Логин не может быть пустым")
     private String login;

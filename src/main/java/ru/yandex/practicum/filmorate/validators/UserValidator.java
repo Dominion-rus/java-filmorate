@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.validators;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -11,9 +12,6 @@ public class UserValidator {
 
     public void validate(User user) {
 
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidateException("Электронная почта не может быть пустой и должна содержать символ '@'");
-        }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidateException("Логин не может быть пустым и содержать пробелы");
         }
@@ -23,6 +21,12 @@ public class UserValidator {
 
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
+        }
+    }
+
+    public void validateId(User user) {
+        if (user.getId() == null) {
+            throw new ConditionsNotMetException("ID пользователя должен быть указан");
         }
     }
 }

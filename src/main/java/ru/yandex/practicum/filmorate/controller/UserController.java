@@ -1,11 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validators.UserValidator;
@@ -17,14 +16,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
     private final Map<Long, User> users = new HashMap<>();
     private final UserValidator userValidator;
-
-    @Autowired
-    public UserController(UserValidator userValidator) {
-        this.userValidator = userValidator;
-    }
 
     @GetMapping
     public Collection<User> findAllUsers() {
@@ -34,9 +29,6 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User createUser(@Valid @RequestBody User user) {
-        if (user == null) {
-            throw new ConditionsNotMetException("Пользователь не может быть null");
-        }
         userValidator.validate(user);
         user.setId(getNextId());
         users.put(user.getId(), user);
@@ -45,9 +37,7 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User updatedUser) {
-        if (updatedUser.getId() == null) {
-            throw new ConditionsNotMetException("ID пользователя должен быть указан");
-        }
+        userValidator.validateId(updatedUser);
 
         if (!users.containsKey(updatedUser.getId())) {
             throw new NotFoundException("Пользователь с ID " + updatedUser.getId() + " не найден");
