@@ -19,7 +19,6 @@ public class FilmControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-
     @Test
     void shouldReturn201WhenFilmIsValid() throws Exception {
         String validFilmJson = "    { \"name\": \"Inception\",\n" +
