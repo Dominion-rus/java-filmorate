@@ -1,5 +1,5 @@
 CREATE TABLE "users" (
-  "id" integer PRIMARY KEY,
+  "id" long PRIMARY KEY,
   "name" varchar,
   "email" varchar,
   "login" varchar,
@@ -7,7 +7,7 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "films" (
-  "id" integer PRIMARY KEY,
+  "id" long PRIMARY KEY,
   "name" varchar,
   "description" varchar,
   "release_date" date,
@@ -16,24 +16,24 @@ CREATE TABLE "films" (
 );
 
 CREATE TABLE "genres" (
-  "id" integer PRIMARY KEY,
+  "id" long PRIMARY KEY,
   "name" varchar
 );
 
 CREATE TABLE "film_genres" (
-  "film_id" integer,
-  "genre_id" integer
+  "film_id" long,
+  "genre_id" long
 );
 
 CREATE TABLE "friends" (
-  "user_id" integer,
-  "friend_id" integer,
+  "user_id" long,
+  "friend_id" long,
   "status" varchar
 );
 
 CREATE TABLE "film_likes" (
-  "user_id" integer,
-  "film_id" integer
+  "user_id" long,
+  "film_id" long
 );
 
 ALTER TABLE "film_genres" ADD FOREIGN KEY ("film_id") REFERENCES "films" ("id");
