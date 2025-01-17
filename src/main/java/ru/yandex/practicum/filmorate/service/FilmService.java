@@ -1,21 +1,37 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreRepository;
+import ru.yandex.practicum.filmorate.storage.mpaRating.MpaRatingRepository;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final GenreRepository genreRepository;
+    private final MpaRatingRepository mpaRatingRepository;
+
+    @Autowired
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       @Qualifier("userDbStorage") UserStorage userStorage,
+                       GenreRepository genreRepository,
+                       MpaRatingRepository mpaRatingRepository) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+        this.genreRepository = genreRepository;
+        this.mpaRatingRepository = mpaRatingRepository;
+    }
 
     public void addLike(Long userId, Long filmId) {
         Film film = filmStorage.findById(filmId)
@@ -70,5 +86,19 @@ public class FilmService {
     public Film getFilmById(Long id) {
         return filmStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Фильм с ID " + id + " не найден"));
+    }
+
+    public Film updateFilm(Film updatedFilm) {
+        Film existingFilm = filmStorage.findById(updatedFilm.getId())
+                .orElseThrow(() -> new NotFoundException("Фильм с ID " + updatedFilm.getId() + " не найден"));
+
+        existingFilm.setName(updatedFilm.getName());
+        existingFilm.setDescription(updatedFilm.getDescription());
+        existingFilm.setReleaseDate(updatedFilm.getReleaseDate());
+        existingFilm.setDuration(updatedFilm.getDuration());
+        existingFilm.setMpaRating(updatedFilm.getMpaRating());
+        existingFilm.setGenres(updatedFilm.getGenres());
+
+        return filmStorage.updateFilm(existingFilm);
     }
 }

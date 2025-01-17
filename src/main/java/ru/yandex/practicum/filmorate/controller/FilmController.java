@@ -2,8 +2,9 @@ package ru.yandex.practicum.filmorate.controller;
 
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -16,12 +17,22 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-@RequiredArgsConstructor
 public class FilmController {
     private static final String TOP_DEFAULT_VALUE = "10";
+
     private final FilmStorage filmStorage;
     private final FilmValidator filmValidator;
     private final FilmService filmService;
+
+    @Autowired
+    public FilmController(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                          FilmValidator filmValidator,
+                          FilmService filmService) {
+        this.filmStorage = filmStorage;
+        this.filmValidator = filmValidator;
+        this.filmService = filmService;
+    }
+
 
     @GetMapping
     public Collection<Film> findAllFilms() {
@@ -40,7 +51,7 @@ public class FilmController {
     public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
         filmValidator.validateId(updatedFilm);
         filmValidator.validate(updatedFilm);
-        return filmStorage.updateFilm(updatedFilm);
+        return filmService.updateFilm(updatedFilm);
     }
 
     @GetMapping("/{id}")
