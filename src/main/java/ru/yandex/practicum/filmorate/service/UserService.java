@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.Friendship;
@@ -94,6 +94,9 @@ public class UserService {
         return commonFriends;
     }
 
+
+
+
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с ID " + id + " не найден"));
@@ -110,6 +113,8 @@ public class UserService {
 
         return friends;
     }
+
+
 
 
     @Transactional

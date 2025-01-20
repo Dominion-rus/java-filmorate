@@ -35,12 +35,13 @@ public class User {
     private LocalDate birthday;
 
 
-    @Setter
-    @Getter
-    @ElementCollection
-    @CollectionTable(name = "friendships", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "friend_id")
-    private Set<Long> friends = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+        name = "friendships",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private Set<User> friends = new HashSet<>();
 
 }
 

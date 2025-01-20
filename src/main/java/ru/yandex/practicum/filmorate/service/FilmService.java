@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidateException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreRepository;
 import ru.yandex.practicum.filmorate.storage.mpaRating.MpaRatingRepository;
@@ -37,18 +38,18 @@ public class FilmService {
         Film film = filmStorage.findById(filmId)
                 .orElseThrow(() -> new NotFoundException("Фильм с ID " + filmId + " не найден"));
 
-        userStorage.findById(userId)
+        User user = userStorage.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден"));
 
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());
         }
 
-        if (film.getLikes().contains(userId)) {
+        if (film.getLikes().contains(user)) {
             throw new ValidateException("Пользователь уже поставил лайк этому фильму");
         }
 
-        film.getLikes().add(userId);
+        film.getLikes().add(user);
         filmStorage.updateFilm(film);
     }
 
@@ -56,16 +57,19 @@ public class FilmService {
         Film film = filmStorage.findById(filmId)
                 .orElseThrow(() -> new NotFoundException("Фильм с ID " + filmId + " не найден"));
 
+        User user = userStorage.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден"));
+
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());
         }
 
-        if (!film.getLikes().contains(userId)) {
+        if (!film.getLikes().contains(user)) {
             throw new NotFoundException("Пользователь не ставил лайк этому фильму или " +
                     "такого пользователя не существует");
         }
 
-        film.getLikes().remove(userId);
+        film.getLikes().remove(user);
         filmStorage.updateFilm(film);
     }
 

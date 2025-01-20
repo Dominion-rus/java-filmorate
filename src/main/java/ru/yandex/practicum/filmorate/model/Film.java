@@ -37,7 +37,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private int duration;
-    private Set<Long> likes = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -51,6 +50,14 @@ public class Film {
     @JoinColumn(name = "mpa_rating_id", referencedColumnName = "id")
     @JsonProperty("mpa")
     private MpaRating mpaRating;
+
+    @ManyToMany
+    @JoinTable(
+            name = "film_likes",
+            joinColumns = @JoinColumn(name = "film_id", referencedColumnName = "film_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    )
+    private Set<User> likes = new HashSet<>();
 
 }
 

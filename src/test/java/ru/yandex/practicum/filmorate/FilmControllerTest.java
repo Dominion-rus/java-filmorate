@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,11 +15,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(
+        locations = "classpath:application-test.properties"
+)
 public class FilmControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Test
+    void shouldReturn201WhenFilmIsValid() throws Exception {
+        String validFilmJson = "{\n" +
+                "  \"name\": \"Inception\",\n" +
+                "  \"description\": \"A mind-bending thriller\",\n" +
+                "  \"releaseDate\": \"2010-07-16\",\n" +
+                "  \"duration\": 148,\n" +
+                "  \"mpa\": { \"id\": 1 },\n" +
+                "  \"genres\": [\n" +
+                "    { \"id\": 1 }\n" +
+                "  ]\n" +
+                "}";
+
+        mockMvc.perform(post("/films")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validFilmJson))
+                .andExpect(status().isCreated());
+    }
 
     @Test
     void shouldReturn400WhenNameIsEmpty() throws Exception {
