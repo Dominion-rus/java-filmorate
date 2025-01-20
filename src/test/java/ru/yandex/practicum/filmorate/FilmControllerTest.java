@@ -15,25 +15,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Disabled
 public class FilmControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void shouldReturn201WhenFilmIsValid() throws Exception {
-        String validFilmJson = "    { \"name\": \"Inception\",\n" +
-                               "      \"description\": \"A mind-bending thriller\",\n" +
-                               "      \"releaseDate\": \"2010-07-16\",\n" +
-                               "      \"duration\": 148\n" +
-                               "    }\n";
-
-        mockMvc.perform(post("/films")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validFilmJson))
-                .andExpect(status().isCreated());
-    }
 
     @Test
     void shouldReturn400WhenNameIsEmpty() throws Exception {

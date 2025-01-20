@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserRepository;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -75,14 +78,21 @@ public class UserService {
 
         userFriends.retainAll(otherUserFriends);
 
-        return userFriends.stream()
-                .map(friendId -> userRepository.findById(friendId)
-                        .orElseThrow(() -> new NotFoundException("Пользователь с ID " + friendId + " не найден")))
-                .collect(Collectors.toList());
+        List<User> commonFriends = userRepository.findAllById(userFriends);
+
+        if (commonFriends.size() != userFriends.size()) {
+            Set<Long> foundIds = commonFriends.stream()
+                    .map(User::getId)
+                    .collect(Collectors.toSet());
+            userFriends.stream()
+                    .filter(id -> !foundIds.contains(id))
+                    .forEach(id -> {
+                        throw new NotFoundException("Пользователь с ID " + id + " не найден");
+                    });
+        }
+
+        return commonFriends;
     }
-
-
-
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
@@ -102,18 +112,32 @@ public class UserService {
     }
 
 
-
-
+    @Transactional
     public User updateUser(User updatedUser) {
-        User existingUser = userStorage.findById(updatedUser.getId())
-                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + updatedUser.getId() + " не найден"));
+        Optional<User> userWithSameEmail = userRepository.findByEmail(updatedUser.getEmail());
+        if (userWithSameEmail.isPresent() && !userWithSameEmail.get().getId().equals(updatedUser.getId())) {
+            throw new ValidateException("Email уже используется другим пользователем");
+        }
 
-        existingUser.setName(updatedUser.getName());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setLogin(updatedUser.getLogin());
-        existingUser.setBirthday(updatedUser.getBirthday());
-        existingUser.setFriends(updatedUser.getFriends());
+        Optional<User> userWithSameLogin = userRepository.findByLogin(updatedUser.getLogin());
+        if (userWithSameLogin.isPresent() && !userWithSameLogin.get().getId().equals(updatedUser.getId())) {
+            throw new ValidateException("Логин уже используется другим пользователем");
+        }
 
-        return userStorage.updateUser(existingUser);
+        try {
+            User existingUser = userStorage.findById(updatedUser.getId())
+                    .orElseThrow(() -> new NotFoundException("Пользователь с ID " +
+                            updatedUser.getId() + " не найден"));
+
+            existingUser.setName(updatedUser.getName());
+            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setLogin(updatedUser.getLogin());
+            existingUser.setBirthday(updatedUser.getBirthday());
+            existingUser.setFriends(updatedUser.getFriends());
+
+            return userStorage.updateUser(existingUser);
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidateException("Поля email или login должны быть уникальными");
+        }
     }
 }

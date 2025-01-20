@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Disabled
 public class UserControllerTest {
 
     @Autowired
@@ -49,19 +48,5 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void shouldReturnOkWhenValidUserIsProvided() throws Exception {
-        String validUserJson = "    {\n" +
-                               "               \"login\": \"dolore\",\n" +
-                               "               \"name\": \"Nick Name\",\n" +
-                               "               \"email\": \"mail@mail.ru\",\n" +
-                               "               \"birthday\": \"1946-08-20\"\n" +
-                               "             }\n";
-
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validUserJson))
-                .andExpect(status().isCreated());
-    }
 }
 

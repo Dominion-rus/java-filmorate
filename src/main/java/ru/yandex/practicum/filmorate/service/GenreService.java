@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -9,14 +10,9 @@ import ru.yandex.practicum.filmorate.storage.genre.GenreRepository;
 import java.util.Collection;
 
 @Service
+@RequiredArgsConstructor
 public class GenreService {
     private final GenreRepository genreRepository;
-
-    @Autowired
-    public GenreService(GenreRepository genreRepository) {
-        this.genreRepository = genreRepository;
-    }
-
 
     public Collection<Genre> getAllGenres() {
         return genreRepository.findAll();

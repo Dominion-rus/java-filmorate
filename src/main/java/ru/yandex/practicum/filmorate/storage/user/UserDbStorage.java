@@ -1,22 +1,19 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+
 
 import java.util.Collection;
 import java.util.Optional;
 
 
 @Component("userDbStorage")
+@RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
-
-
     private final UserRepository userRepository;
-
-    public UserDbStorage(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     @Transactional
@@ -26,11 +23,13 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<User> findAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
