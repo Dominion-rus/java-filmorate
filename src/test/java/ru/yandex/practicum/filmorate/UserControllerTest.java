@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -12,6 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(
+        locations = "classpath:application-test.properties"
+)
 public class UserControllerTest {
 
     @Autowired
@@ -50,16 +54,17 @@ public class UserControllerTest {
     @Test
     void shouldReturnOkWhenValidUserIsProvided() throws Exception {
         String validUserJson = "    {\n" +
-                               "               \"login\": \"dolore\",\n" +
-                               "               \"name\": \"Nick Name\",\n" +
-                               "               \"email\": \"mail@mail.ru\",\n" +
-                               "               \"birthday\": \"1946-08-20\"\n" +
-                               "             }\n";
+                "               \"login\": \"dolore\",\n" +
+                "               \"name\": \"Nick Name\",\n" +
+                "               \"email\": \"mail@mail.ru\",\n" +
+                "               \"birthday\": \"1946-08-20\"\n" +
+                "             }\n";
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validUserJson))
                 .andExpect(status().isCreated());
     }
+
 }
 
